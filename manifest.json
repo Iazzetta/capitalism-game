@@ -1,0 +1,21 @@
+{
+  "short_name": "iMercenary",
+  "name": "iMercenary",
+  "background_color": "#8bc34a",
+  "display": "standalone",
+  "theme_color": "#8bc34a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/img/icons/16x16.png",
+      "type": "image/png",
+      "sizes": "16x16",
+    },
+    {
+      "src": "/img/icons/192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+    }
+  ],
+  "start_url": "/?webapp=true"
+}

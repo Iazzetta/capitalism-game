@@ -1,9 +1,23 @@
 <html ng-app="adMoney">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capitalism Game</title>
-    <link rel="stylesheet" media="all" href="css/app.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <title>iMercenary</title>
+    <meta http-equiv="cleartype" content="on">
+    <meta name="MobileOptimized" content="320">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="theme-color" content="#8bc34a">
+    <meta name="msapplication-navbutton-color" content="#8bc34a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#8bc34a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="iMercenary">
+    <link rel="icon" sizes="16x16" href="/img/icons/16x16.png">
+    <link rel="icon" sizes="192x192" href="/img/icons/192x192.png">
+    <link rel="apple-touch-icon" sizes="16x16" href="/img/icons/16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/img/icons/192x192.png">
+    <link rel="shortcut icon" type="image/png" href="/img/icons/16x16.png"/>
+    <link rel="stylesheet" media="all" href="css/app.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
     <!-- Angular Material requires Angular.js Libraries -->
      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
@@ -12,60 +26,55 @@
 
      <!-- Angular Material Library -->
      <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    
+    <!-- Themes -->
+    <script src="js/themes/fruit.js"></script>
+    <script src="js/themes/cannabis.js"></script>
+    
     <script src="js/app.js"></script>
+    
   </head>
-  <body ng-controller="main">
+  <body ng-controller="main" class="{{css_selected}}">
     <div>
       <!-- User -->
-      <div style="position: fixed; width: 100%">
+      <div style="position: fixed; width: 100%;top:0;left:0;z-index:10;">
         <md-toolbar class="md-hue-2">
           <div class="md-toolbar-tools">
-            <md-button class="md-icon-button" aria-label="Settings" ng-disabled="true">
-              <md-icon md-svg-icon="img/icons/menu.svg"></md-icon>
-            </md-button>
-
-            <h2 flex="" md-truncate="">{{you.name}} | {{you.money | currency:'R$ '}}</h2>
-
-            <md-button class="md-icon-button" aria-label="Favorite">
-              <md-icon md-svg-icon="img/icons/favorite.svg" style="color: greenyellow;"></md-icon>
-            </md-button>
-
-            <md-button class="md-icon-button" aria-label="More">
-              <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
-            </md-button>
+            <h5 flex="" md-truncate="" style="top: -2px;position: relative;font-size: 11px;">
+              <div>Nome: {{you.name}}</div>
+              <div><img style="top: 4px;position: relative;width: 13px;" src="/img/cash.png"> {{you.money | currency:'R$ '}}</div>
+              <div><img style="top: 4px;position: relative;width: 13px;" src="/img/truck.png"> {{you.truck}}/{{you.truck_max }} <b style="color:red;" ng-click="upgradeTruck()">upgrade truck</b></div>
+            </h5>
           </div>
         </md-toolbar>
       </div>
       
       <!-- Buy Boxes -->
-      <div style="position:relative;top:75px;">
-        <md-card ng-if="t.nivel <= you.nivel" ng-repeat="t in list_things" md-theme="dark-purple" md-theme-watch="">
+      <div style="position:relative;top:75px;z-index:0;">
+        <md-card ng-if="t.enabled" ng-repeat="t in list_things" md-theme="dark-purple" md-theme-watch="">
           <md-card-title>
             <md-card-title-text>
-              <md-checkbox ng-model="t.manager" ng-change="ativateManager(t)">Activate Manager {{t.manager_cost | currency:'R$ ' }} </md-checkbox>
+              <md-checkbox ng-model="t.manager" ng-disabled="t.manager_cost > you.money" ng-change="ativateManager(t)">Chamar laranja para farmar {{t.manager_cost | currency:'R$ ' }} </md-checkbox>
               <span class="md-headline">{{t.name}}</span>
               <span class="md-subhead">
                 <p>Valor de venda: {{t.sell_cost | currency:'R$ '}}</p>
                 <p>Quantidade: {{t.quantity}} (vendendo a {{t.sell_cost * t.quantity | currency: 'R$ '}})</p>
-                <md-progress-linear md-mode="determinate" value="{{t.timer || 0}}"></md-progress-linear>
+                <p>Tempo de venda: {{t.delay / 1000}} segundos <b ng-if="t.timer > 0">// Tempo restante: {{t.timer}} segundos</b>  <md-progress-circular ng-if="t.timer > 0 || t.manager" class="md-hue-2" style="display: inline; margin-left:5px;" md-diameter="20px"></md-progress-circular></p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
               <div class="md-media-sm card-media">
-                <img src="{{t.image}}" width="80" height="80">
+                <img src="/img/{{t.image}}" width="80" height="80">
               </div>
             </md-card-title-media>
           </md-card-title>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-click="sellProduct(t, false)" class="md-raised md-warn">SELL</md-button>
-            <md-button ng-click="buyQuantity(t)" class="md-raised md-primary">Buy <b>{{t.value_cost | currency:'R$ ' }}</b></md-button>
+            <md-button ng-mousedown="sellProduct(t, false)" class="md-raised md-primary" ng-disabled="t.manager" md-ripple-size="auto">{{ t.manager ? 'MANAGER BUYING...':'SELL'}}</md-button>
+            <md-button ng-click="buyQuantity(t)" class="md-raised md-warn" ng-disabled="t.value_cost > you.money" md-ripple-size="auto">Buy <b>{{t.value_cost | currency:'R$ ' }}</b></md-button>
           </md-card-actions>
         </md-card>
       </div>
-      
-      
-    
-      
     </div>
+    <script src="/service-worker.js"></script>
   </body>
 </html>

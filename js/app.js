@@ -129,7 +129,6 @@ angular.module('adMoney', ['ngMaterial'])
      $interval.cancel(product.manager_task);
      product.manager_task = null;
      $timeout(function() {
-        product.delay--;
         $scope.you.money += product.sell_cost * product.quantity;
         $interval.cancel(timer);
         product.timer = 0;
@@ -138,7 +137,6 @@ angular.module('adMoney', ['ngMaterial'])
     } else {
       if (!product.manager_task){
         product.manager_task = $interval(function(){
-          product.delay = 0;
           $scope.you.money += product.sell_cost * product.quantity;
           $interval.cancel(timer);
           product.timer = 0;

@@ -130,4 +130,7 @@ angular.module('adMoney', ['ngMaterial'])
   $timeout(function(){
     $scope.you.name = prompt("Digite seu nome: ", "Guilherme");
   }, 2000)
+  window.onbeforeunload = function(){
+    return 'Se você sair, você perderá seu progresso.';
+  };
 });

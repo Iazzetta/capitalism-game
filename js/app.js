@@ -138,7 +138,7 @@ angular.module('adMoney', ['ngMaterial'])
     
     localStorage.setItem("list_things", JSON.stringify($scope.list_things));
     localStorage.setItem("you", JSON.stringify($scope.you));
-  }, 1000);
+  }, 500);
   
   $timeout(function(){
     if(!$scope.you.name){

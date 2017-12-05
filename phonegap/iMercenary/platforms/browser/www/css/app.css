@@ -1,0 +1,27 @@
+body md-toolbar.md-default-theme.md-hue-2:not(.md-menu-toolbar), md-toolbar.md-hue-2:not(.md-menu-toolbar){
+  background-color: #8bc34a;
+}
+.user-profile {
+  border: 1px solid black;
+  padding: 10px;
+  background-color: brown;
+  width: 250px;
+  color: white;
+}
+.user-profile .money {
+  color: green;
+  text-shadow: 0px 0px 5px black;
+}
+
+.buy-box {
+  border: 1px solid orange;
+  background-color: orange;
+  width: 250px;
+  padding: 10px;
+  margin-top: 20px;
+  box-shadow: 0px 0px 5px black;
+}
+.buy-box.item {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

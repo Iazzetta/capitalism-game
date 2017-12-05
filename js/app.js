@@ -15,6 +15,16 @@ angular.module('adMoney', ['ngMaterial'])
   $scope.list_things = tm_cannabis; //tm_cannabis, tm_fruit
   $scope.css_selected = 'cannabis'; // fruit, cannabis, etc.
   
+  var list_things = JSON.parse(localStorage.getItem("list_things"));
+  var you = JSON.parse(localStorage.getItem("you"));
+  
+  if(you){
+    $scope.you = you;
+  }
+  if(list_things) {
+    $scope.list_things = list_things;
+  }
+  
   $scope.ativateManager = function(product){
     if(product.manager){
       if(!product.manager_bought) {
@@ -125,10 +135,15 @@ angular.module('adMoney', ['ngMaterial'])
         product.enabled = true;
       }
     }
+    
+    localStorage.setItem("list_things", JSON.stringify($scope.list_things));
+    localStorage.setItem("you", JSON.stringify($scope.you));
   }, 1000);
   
   $timeout(function(){
-    $scope.you.name = prompt("Digite seu nome: ", "Guilherme");
+    if(!$scope.you.name){
+      $scope.you.name = prompt("Digite seu nome: ", "Guilherme");
+    }
   }, 2000)
   window.onbeforeunload = function(){
     return 'Se você sair, você perderá seu progresso.';

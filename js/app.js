@@ -1,29 +1,9 @@
 angular.module('adMoney', ['ngMaterial'])
 .controller('main', function($scope, $timeout, $interval) {
-  
-  $scope.you = {
-    id: 1,
-    name: "",
-    money: 350.00,
-    nivel: 1,
-    truck: 1,
-    truck_max: 200,
-    truck_price: 100000.00
-  };
 
   // Select theme
   $scope.list_things = tm_cannabis; //tm_cannabis, tm_fruit
   $scope.css_selected = 'cannabis'; // fruit, cannabis, etc.
-  
-  var list_things = JSON.parse(localStorage.getItem("list_things"));
-  var you = JSON.parse(localStorage.getItem("you"));
-  
-  if(you){
-    $scope.you = you;
-  }
-  if(list_things) {
-    $scope.list_things = list_things;
-  }
   
   $scope.ativateManager = function(product){
     if(product.manager){
@@ -51,7 +31,7 @@ angular.module('adMoney', ['ngMaterial'])
     }
     
     var timer = null;
-    product.timer = angular.copy(product.delay / 1000);
+    product.timer = angular.copy(product.delay);
     product.blocked = true;
     timer = $interval(function(){
       if (product.timer > 0) {
@@ -59,32 +39,31 @@ angular.module('adMoney', ['ngMaterial'])
       }
     }, 1000);
     
-    if(!product.manager){
-      product.manager_task_active = false;
-      $interval.cancel(product.manager_task);
-      $timeout(function() {
-        $scope.you.money += product.sell_cost * product.quantity;
+    product.manager_task_active = false;
+    $interval.cancel(product.manager_task);
+    $timeout(function() {
+        $scope.you.money += (product.sell_cost * product.quantity) - (product.value_cost * product.quantity);
         $interval.cancel(timer);
         product.timer = 0;
         product.blocked = false;
-      }, product.delay); 
-    } else {
-      // Se tem manager on e nao tem task nenhuma, cria.
-      if (!product.manager_task_active && product.manager){
+    }, product.delay * 1000); 
+ 
+    // Se tem manager on e nao tem task nenhuma, cria.
+    if (!product.manager_task_active && product.manager){
         product.manager_task_active = true;
         product.manager_task = $interval(function(){
-          $scope.you.money += product.sell_cost * product.quantity;
-          $interval.cancel(timer);
-          product.timer = 0;
-          product.blocked = false;
-        }, product.delay);
+          $scope.sellProduct(product);
+        }, product.delay * 1000);
         console.log("Criamos manager interval.")
-      }
     }
     
   }
   
   $scope.buyQuantity = function(product) {
+    if (product.quantity >= 100) {
+        alert("Você atingiu a capacidade máxima de quantidade (100uni.).")
+        return;
+    }
     if ($scope.you.money < product.value_cost){
       alert("Você não possui saldo o suficiente.")
       return;
@@ -110,8 +89,8 @@ angular.module('adMoney', ['ngMaterial'])
     
     $scope.you.money -= product.value_cost;
     product.quantity++;
-    product.sell_cost += (product.percentage_gain *   product.sell_cost / 100) // Aumentando valor em 5%
-    product.value_cost += (product.percentage_cost *   product.value_cost / 100) //Aumentando valor em 6%
+    // product.sell_cost += (product.percentage_gain * product.sell_cost / 100) // Aumentando valor em 5%
+    // product.value_cost -= (product.percentage_cost * product.value_cost / 100) //Aumentando valor em 6%
     
   };
   
@@ -141,8 +120,28 @@ angular.module('adMoney', ['ngMaterial'])
   }, 500);
   
   $timeout(function(){
-    if(!$scope.you.name){
-      $scope.you.name = prompt("Digite seu nome: ", "Guilherme");
+    if (confirm("Você gostaria de carregar os ultimos dados salvos?")) {
+        var list_things = JSON.parse(localStorage.getItem("list_things"));
+        var you = JSON.parse(localStorage.getItem("you"));
+        
+        if(you){
+            $scope.you = you;
+        }
+        if(list_things) {
+            $scope.list_things = list_things;
+        }
+    }
+    if(!$scope.you){
+        $scope.you = {
+          id: 1,
+          name: "",
+          money: 50.00,
+          nivel: 1,
+          truck: 1,
+          truck_max: 200,
+          truck_price: 10000.00
+        };
+        $scope.you.name = prompt("Digite seu nome: ", "Guilherme");
     }
   }, 2000)
   window.onbeforeunload = function(){

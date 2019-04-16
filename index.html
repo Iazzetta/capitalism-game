@@ -1,7 +1,7 @@
 <html ng-app="adMoney">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
     <title>iMercenary</title>
     <meta http-equiv="cleartype" content="on">
     <meta name="MobileOptimized" content="320">
@@ -17,15 +17,14 @@
     <link rel="apple-touch-icon" sizes="16x16" href="/img/icons/16x16.png">
     <link rel="apple-touch-icon" sizes="192x192" href="/img/icons/192x192.png">
     <link rel="shortcut icon" type="image/png" href="/img/icons/16x16.png"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
     <link rel="stylesheet" media="all" href="css/app.css">
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
-    <!-- Angular Material requires Angular.js Libraries -->
-     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
-     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-aria.min.js"></script>
-     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-messages.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
 
-     <!-- Angular Material Library -->
-     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+      <!-- Angular Material Library -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js">
     
     <!-- Themes -->
     <script src="js/themes/fruit.js"></script>
@@ -51,26 +50,29 @@
       
       <!-- Buy Boxes -->
       <div style="position:relative;top:75px;z-index:0;">
-        <md-card ng-if="t.enabled" ng-repeat="t in list_things" md-theme="dark-purple" md-theme-watch="">
+        <md-card style="width:30%;" ng-if="t.enabled" ng-repeat="t in list_things" md-theme="dark-purple" md-theme-watch="">
           <md-card-title>
             <md-card-title-text>
-              <md-checkbox ng-model="t.manager" ng-disabled="t.manager_cost > you.money" ng-change="ativateManager(t)">Chamar laranja para farmar {{t.manager_cost | currency:'R$ ' }} </md-checkbox>
+              <md-checkbox ng-model="t.manager" ng-disabled="t.manager_cost > you.money" ng-change="ativateManager(t)">Contratar laranja para gerenciar {{t.manager_cost | currency:'R$ ' }} </md-checkbox>
               <span class="md-headline">{{t.name}}</span>
               <span class="md-subhead">
-                <p>Valor de venda: {{t.sell_cost | currency:'R$ '}}</p>
-                <p>Quantidade: {{t.quantity}} (vendendo a {{t.sell_cost * t.quantity | currency: 'R$ '}})</p>
-                <p>Tempo de venda: {{t.delay / 1000}} segundos <b ng-if="t.timer > 0">// Tempo restante: {{t.timer}} segundos</b>  <md-progress-circular ng-if="t.timer > 0 || t.manager" class="md-hue-2" style="display: inline; margin-left:5px;" md-diameter="20px"></md-progress-circular></p>
+                <p><b>Valor unitário da grama:</b> {{t.sell_cost | currency:'R$ '}}</p>
+                <p><b>Quantidade de gramas no Pacote:</b> {{t.quantity}}</p>
+                <p><b>Valor por Pacote:</b> {{t.sell_cost * t.quantity | currency: 'R$ '}})</p>
+                <p><b>Despesa:</b>  {{t.value_cost * t.quantity | currency: 'R$ '}})</p>
+                <p><b>Lucro p/Venda:</b>  {{ (t.sell_cost * t.quantity) - (t.value_cost * t.quantity) | currency: 'R$ '}})</p>
+                <p><b>Tempo de venda: {{t.delay}} segundos <b ng-if="t.timer > 0">// Tempo restante: {{t.timer}} segundos</b>  <md-progress-circular ng-if="t.timer > 0 || t.manager" class="md-hue-2" style="display: inline; margin-left:5px;" md-diameter="20px"></md-progress-circular></p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
               <div class="md-media-sm card-media">
-                <img src="/img/{{t.image}}" width="80" height="80">
+                <img ng-src="/img/{{t.image}}" width="80" height="80">
               </div>
             </md-card-title-media>
           </md-card-title>
           <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-mousedown="sellProduct(t, false)" class="md-raised md-primary" ng-disabled="t.manager" md-ripple-size="auto">{{ t.manager ? 'MANAGER BUYING...':'SELL'}}</md-button>
-            <md-button ng-click="buyQuantity(t)" class="md-raised md-warn" ng-disabled="t.value_cost > you.money" md-ripple-size="auto">Buy <b>{{t.value_cost | currency:'R$ ' }}</b></md-button>
+            <md-button ng-mousedown="sellProduct(t, false)" class="md-raised md-primary" ng-disabled="t.manager" md-ripple-size="auto">{{ t.manager ? 'LARANJA GERENCIANDO...':'VENDER PACOTE'}}</md-button>
+            <md-button ng-click="buyQuantity(t)" class="md-raised md-warn" ng-disabled="t.value_cost > you.money" md-ripple-size="auto">Comprar  <b>{{t.value_cost | currency:'R$ ' }}</b></md-button>
           </md-card-actions>
         </md-card>
       </div>
